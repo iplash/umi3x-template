@@ -113,7 +113,7 @@ const BasicLayout: React.FC<BasicLayoutProps> = (props) => {
   return (
     <Layout>
       <Sider trigger={null} collapsible collapsed={collapsed}>
-        <div className={styles.logo}>{collapsed ? '红色旅游' : '红色旅游管理系统'}</div>
+        <div className={styles.logo}>{collapsed ? '管理' : '管理系统'}</div>
         <Menu theme="dark" mode="inline" selectedKeys={selectedKeys}>
           {menus.map((menu: MenuItem) =>
             menu.type === 'list' ? (

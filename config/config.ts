@@ -2,38 +2,43 @@ import { defineConfig } from 'umi';
 import pageRoutes from './router.config';
 
 export default defineConfig({
-  outputPath: '../tourismPlatform-web/src/main/resources/static',
-  nodeModulesTransform: {
-    type: 'none',
-  },
-  routes: pageRoutes,
-  esbuild: {},
-  dva: {},
   antd: {},
-  treeShaking: false,
-  hash: true,
-  fastRefresh: {},
-  dynamicImport: {},
-  chunks: ['umi'],
-  chainWebpack(config) {
-    config.merge({
-      optimization: {
-        splitChunks: {
-          chunks: 'all',
-          minSize: 30000,
-          minChunks: 3,
-          automaticNameDelimiter: '.',
-          cacheGroups: {
-            vendor: {
-              name: 'vendors',
-              test: /[\\/]node_modules[\\/]/,
-              priority: 10,
+  chainWebpack(config, { env }) {
+    if (env === 'production') {
+      config.merge({
+        optimization: {
+          splitChunks: {
+            chunks: 'all',
+            minSize: 30000,
+            minChunks: 3,
+            automaticNameDelimiter: '.',
+            cacheGroups: {
+              vendor: {
+                name: 'vendors',
+                test: /[\\/]node_modules[\\/]/,
+                priority: 10,
+              },
             },
           },
         },
-      },
-    });
+      });
+    }
   },
+  chunks: ['umi'],
+  define: {
+    'process.env.apiUrl': '//localhost:5000',
+  },
+  devtool: false,
+  dva: {},
+  dynamicImport: {},
+  esbuild: {},
+  fastRefresh: {},
+  hash: true,
+  nodeModulesTransform: {
+    type: 'none',
+  },
+  outputPath: '/dist',
+  routes: pageRoutes,
   targets: {
     android: 5,
     chrome: 58,
@@ -43,4 +48,6 @@ export default defineConfig({
     ios: 7,
     safari: 10,
   },
+  title: 'XX 管理后台',
+  treeShaking: false,
 });

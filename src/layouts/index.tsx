@@ -1,21 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import { Layout, Menu, message } from 'antd';
+import { Layout, Menu, Breadcrumb, Popconfirm, message } from 'antd';
 import {
   AimOutlined,
   DeploymentUnitOutlined,
-  MenuUnfoldOutlined,
-  MenuFoldOutlined,
-  PoweroffOutlined,
+  DoubleRightOutlined,
+  DoubleLeftOutlined,
   ProfileOutlined,
   SlackOutlined,
-  SettingOutlined,
+  UserSwitchOutlined,
 } from '@ant-design/icons';
-import { history } from 'umi';
+import { history, Link } from 'umi';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 import { MenuItem } from '@/types';
-
-import avatar from '@/assets/images/default-avatar.png';
 import styles from './index.less';
 
 interface BasicLayoutProps {
@@ -32,15 +29,21 @@ interface BasicLayoutProps {
 
 const menus: MenuItem[] = [
   { key: '1', title: '菜单1', icon: <DeploymentUnitOutlined />, url: '/', type: 'page' },
-  { key: '2', title: '菜单2', icon: <AimOutlined />, url: '/', type: 'page' },
+  { key: '2', title: '菜单2', icon: <AimOutlined />, url: '/second', type: 'page' },
   {
     key: '3',
     title: '菜单3',
     icon: <SlackOutlined />,
     type: 'list',
     subs: [
-      { key: '4', title: '菜单4', icon: <ProfileOutlined />, url: '/', type: 'page' },
-      { key: '5', title: '菜单5', icon: <SettingOutlined />, url: '/', type: 'page' },
+      {
+        key: '4',
+        parent: '3',
+        title: '菜单4',
+        icon: <ProfileOutlined />,
+        url: '/three',
+        type: 'page',
+      },
     ],
   },
 ];
@@ -54,9 +57,26 @@ const BasicLayout: React.FC<BasicLayoutProps> = (props) => {
     children,
     location: { pathname },
   } = props;
-  const [dropdown, setDropdown] = useState<boolean>(false);
-  const [collapsed, setCollapsed] = useState<boolean>(false);
-  const [selectedKeys, setSelectedKeys] = useState<string[]>(['1']);
+  const [collapsed, setCollapsed] = useState<boolean>(true);
+  const [openKeys, setOpenKeys] = useState<string[]>([]);
+  const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
+
+  const getCurrentMenu = (str: string): MenuItem | null => {
+    let curr = null;
+    const dfs = (subs: MenuItem[]) => {
+      for (const m of subs) {
+        if (m.url === str || m.key === str) {
+          curr = m;
+          break;
+        }
+        if (m.subs) {
+          dfs(m.subs);
+        }
+      }
+    };
+    dfs(menus);
+    return curr;
+  };
 
   useEffect(() => {
     if (!user?.info) {
@@ -110,51 +130,89 @@ const BasicLayout: React.FC<BasicLayoutProps> = (props) => {
     }
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-shadow
+  const handleOpen = (openKeys: any) => {
+    setOpenKeys(openKeys);
+  };
+
+  const createBreadcrumb = () => {
+    const currentMenu = getCurrentMenu(pathname);
+    const parentMenu =
+      currentMenu && currentMenu.parent ? getCurrentMenu(currentMenu.parent) : null;
+
+    return (
+      <Breadcrumb style={{ margin: '16px 0' }}>
+        <Breadcrumb.Item>
+          <Link to="/">首页</Link>
+        </Breadcrumb.Item>
+        {parentMenu && <Breadcrumb.Item>{parentMenu.title}</Breadcrumb.Item>}
+        {currentMenu && <Breadcrumb.Item>{currentMenu.title}</Breadcrumb.Item>}
+      </Breadcrumb>
+    );
+  };
+
   return (
     <Layout>
-      <Sider trigger={null} collapsible collapsed={collapsed}>
-        <div className={styles.logo}>{collapsed ? '管理' : '管理系统'}</div>
-        <Menu theme="dark" mode="inline" selectedKeys={selectedKeys}>
-          {menus.map((menu: MenuItem) =>
-            menu.type === 'list' ? (
-              <Menu.SubMenu key={menu.key} icon={menu.icon} title={<span>{menu.title}</span>}>
-                {generateSubmenu(menu.key)}
-              </Menu.SubMenu>
-            ) : (
-              <Menu.Item key={menu.key} icon={menu.icon} onClick={() => onRedirect(menu)}>
-                <span>{menu.title}</span>
-              </Menu.Item>
-            ),
-          )}
-        </Menu>
-      </Sider>
-      <Layout>
-        <Header className={styles.header}>
-          {React.createElement(collapsed ? MenuUnfoldOutlined : MenuFoldOutlined, {
-            className: styles.trigger,
-            onClick: toggle,
-          })}
+      <Header>
+        <div className={styles.info}>
+          <div className={styles.logo}>LOGO</div>
           <div className={styles.info}>
-            <span>Hi， {user?.info?.username} 欢迎回来</span>
-            <span onMouseEnter={() => setDropdown(true)} onMouseLeave={() => setDropdown(false)}>
-              <img src={user?.info?.head_img || avatar} alt="用户头像" />
-            </span>
-            <ul
-              onMouseEnter={() => setDropdown(true)}
-              onMouseLeave={() => setDropdown(false)}
-              className={styles.dropdown}
-              style={{ display: dropdown ? 'block' : 'none' }}
+            <Popconfirm
+              placement="bottomRight"
+              title={'确认注销登陆?'}
+              onConfirm={signOut}
+              okText="确定"
+              cancelText="取消"
             >
-              <li onClick={signOut}>
-                <PoweroffOutlined /> 退出登录
-              </li>
-            </ul>
+              <div className={styles.avatar}>
+                <UserSwitchOutlined />
+              </div>
+            </Popconfirm>
           </div>
-        </Header>
-        <Content className={styles.content}>{children}</Content>
-        <Footer style={{ textAlign: 'center', fontSize: 14 }}>
-          © 2021 XXXX有限公司. All rights reserved.
-        </Footer>
+        </div>
+      </Header>
+      <Layout>
+        <Sider
+          trigger={null}
+          collapsedWidth={60}
+          collapsible
+          collapsed={collapsed}
+          style={{ position: 'relative' }}
+        >
+          <Menu
+            mode="inline"
+            onOpenChange={handleOpen}
+            openKeys={openKeys}
+            selectedKeys={selectedKeys}
+            style={{ height: '100%', borderRight: 0 }}
+          >
+            {menus.map((menu: MenuItem) =>
+              menu.subs && menu.subs.length ? (
+                <Menu.SubMenu
+                  key={menu.key}
+                  icon={menu.icon || null}
+                  title={<span>{menu.title}</span>}
+                >
+                  {generateSubmenu(menu.key)}
+                </Menu.SubMenu>
+              ) : (
+                <Menu.Item key={menu.key} icon={menu.icon || null} onClick={() => onRedirect(menu)}>
+                  <span>{menu.title}</span>
+                </Menu.Item>
+              ),
+            )}
+          </Menu>
+          <div className={styles.trigger} onClick={toggle}>
+            {collapsed ? <DoubleRightOutlined /> : <DoubleLeftOutlined />}
+          </div>
+        </Sider>
+        <Layout style={{ padding: '0 24px' }}>
+          {createBreadcrumb()}
+          <Content className={styles.content}>{children}</Content>
+          <Footer style={{ textAlign: 'center', fontSize: 13, padding: 18 }}>
+            © 2021 XXXXX有限公司. All rights reserved.
+          </Footer>
+        </Layout>
       </Layout>
     </Layout>
   );

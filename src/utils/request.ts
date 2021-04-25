@@ -90,10 +90,6 @@ const request = extend({
 request.interceptors.request.use((url: string, options: any) => {
   const { headers } = options;
 
-  if (url.indexOf('auth-code') === -1) {
-    // eslint-disable-next-line no-param-reassign
-    options.params.token = sessionStorage.getItem('token');
-  }
   return {
     url: `${process.env.apiUrl}${url}`,
     options: { ...options, headers },

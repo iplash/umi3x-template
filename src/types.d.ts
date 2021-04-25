@@ -22,9 +22,10 @@ export interface User {
 export interface MenuItem {
   icon: React.ReactNode;
   key: string;
+  parent?: string;
   title: string;
   url?: string;
-  type: 'list' | 'page' | 'button';
+  type: 'list' | 'page' | 'element';
   subs?: MenuItem[];
 }
 

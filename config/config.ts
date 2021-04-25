@@ -1,9 +1,11 @@
 import { defineConfig } from 'umi';
+import CaseSensitivePathsPlugin from 'case-sensitive-paths-webpack-plugin';
 import pageRoutes from './router.config';
 
 export default defineConfig({
   antd: {},
   chainWebpack(config, { env }) {
+    config.plugin('case-sensitive-paths').use(CaseSensitivePathsPlugin);
     if (env === 'production') {
       config.merge({
         optimization: {
@@ -24,13 +26,14 @@ export default defineConfig({
       });
     }
   },
-  chunks: ['umi'],
   define: {
     'process.env.apiUrl': '//localhost:5000',
   },
   devtool: false,
   dva: {},
-  dynamicImport: {},
+  dynamicImport: {
+    loading: '@/loading',
+  },
   esbuild: {},
   fastRefresh: {},
   hash: true,

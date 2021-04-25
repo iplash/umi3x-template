@@ -1,5 +1,20 @@
 @import '../global.less';
 
+:global {
+  .ant-layout-header {
+    height: 56px;
+    padding: 0 10px 0 50px;
+  }
+
+  .ant-menu-inline-collapsed {
+    width: 60px;
+  }
+
+  .ant-pro-page-container-children-content {
+    margin: 0;
+  }
+}
+
 .header:extend(.flex-row) {
   justify-content: space-between;
   padding: 0;
@@ -9,23 +24,20 @@
 .info:extend(.flex-row) {
   position: relative;
   flex: 1;
-  justify-content: space-between;
+  justify-content: flex-end;
+  height: 56px;
+  line-height: 56px;
+  cursor: pointer;
 
-  span {
-    display: inline-block;
+  .avatar {
+    height: 56px;
+    padding: 0 25px;
+    color: #fff;
+    font-size: 24px;
+    background: transparent;
 
-    img {
-      width: 36px;
-      height: 36px;
-    }
-
-    &:nth-child(2) {
-      padding: 0 28px;
-      cursor: pointer;
-
-      &:hover {
-        background: rgba(0, 0, 0, 0.025);
-      }
+    &:hover {
+      background: rgba(39, 144, 255, 0.25);
     }
   }
 
@@ -70,11 +82,15 @@
 }
 
 .trigger {
-  padding: 0 24px;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
   font-size: 18px;
   line-height: 64px;
+  text-align: center;
   cursor: pointer;
-  transition: color 0.3s;
+  transition: all 0.3s ease-in-out;
 }
 
 .trigger:hover {
@@ -83,19 +99,23 @@
 
 .logo:extend(.flex-row) {
   justify-content: center;
-  height: 32px;
-  margin: 16px;
+  height: 56px;
   overflow: hidden;
   color: #fff;
   font-size: 16px;
   white-space: nowrap;
 }
 
-.site-layout .site-layout-background {
-  background: #fff;
-}
-
 .content {
-  min-height: calc(100vh - 133px);
-  padding: 24px 24px 0;
+  height: calc(100vh - 168px);
+  min-height: calc(100vh - 168px);
+  max-height: calc(100vh - 168px);
+  overflow-y: scroll;
+  background-color: #fff;
+
+  :global {
+    .ant-pro-page-container-children-content {
+      margin: 0;
+    }
+  }
 }

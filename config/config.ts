@@ -29,7 +29,7 @@ export default defineConfig({
   define: {
     'process.env.apiUrl': '//localhost:5000',
   },
-  devtool: false,
+  devtool: 'source-map',
   dva: {},
   dynamicImport: {
     loading: '@/loading',
@@ -47,7 +47,7 @@ export default defineConfig({
     chrome: 58,
     edge: 13,
     firefox: 45,
-    ie: 9,
+    ie: 11,
     ios: 7,
     safari: 10,
   },

@@ -3,7 +3,7 @@
   "scripts": {
     "analyze": "cross-env ANALYZE=1 umi build",
     "start:mock": "umi dev UMI_ENV=dev --port=5000 COMPRESS=none",
-    "start:dev": "cross-env MOCK=none UMI_ENV=stage umi dev --port=5000",
+    "start:dev": "cross-env MOCK=none umi dev UMI_ENV=dev --port=5000",
     "start:proxy": "MOCK=none UMI_ENV=proxy umi dev --port=5000 COMPRESS=none",
     "build:stage": "cross-env UMI_ENV=stage umi build",
     "build": "cross-env UMI_ENV=prod umi build",
@@ -45,6 +45,7 @@
     "@umijs/test": "^3.4.8",
     "case-sensitive-paths-webpack-plugin": "^2.4.0",
     "commitizen": "^4.2.3",
+    "cross-env": "^7.0.3",
     "cz-conventional-changelog": "3.3.0",
     "eslint": "^7.15.0",
     "eslint-config-ali": "^12.0.1",

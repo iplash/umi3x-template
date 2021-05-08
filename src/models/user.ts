@@ -1,5 +1,4 @@
 import { login, signOut } from '@/services';
-import { YieldReturn } from '@/types';
 
 export default {
   namespace: 'user',
@@ -11,11 +10,11 @@ export default {
 
   effects: {
     *login({ payload, callback }: any, { call }: any) {
-      const response: YieldReturn<typeof login> = yield call(login, payload);
+      const response: API.YieldReturn<typeof login> = yield call(login, payload);
       if (callback) callback(response);
     },
     *signOut({ payload, callback }: any, { call }: any) {
-      const response: YieldReturn<typeof signOut> = yield call(signOut, payload);
+      const response: API.YieldReturn<typeof signOut> = yield call(signOut, payload);
       if (callback) callback(response);
     },
   },

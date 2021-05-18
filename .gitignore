@@ -17,6 +17,7 @@
 .DS_Store
 
 # umi
+/config/*.local.ts
 /src/.umi
 /src/.umi-production
 /src/.umi-test
